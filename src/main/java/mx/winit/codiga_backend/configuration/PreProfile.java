@@ -45,6 +45,7 @@ public class PreProfile {
         ds.setJdbcUrl(jdbcUrl);
         ds.setUsername(userName);
         ds.setPassword(password);
+        ds.addDataSourceProperty("useSSL", "false");
         return ds;
     }
 
