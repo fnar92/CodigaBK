@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mx.winit.codiga_backend.mapper.PerfilMapper">
+    
+    <resultMap id="getPerfilByIdUsuarioMap" type="Perfil" >
+        <result property="idPerfil" column="id_perfil"/> 
+        <result property="descripcion" column="descripcion"/>         
+        <result property="tarjet" column="tarjet"/>         
+    </resultMap>
+    
+    <select id="getPerfilByIdUsuario" resultMap="getPerfilByIdUsuarioMap">  
+        SELECT
+            p.id_perfil,
+            P.descripcion,
+            P.tarjet
+        FROM
+            usuario_perfil pp
+        INNER JOIN perfil p ON p.id_perfil = pp.id_perfil
+        AND pp.activo = true AND pp.borrado = false
+        WHERE
+        pp.id_usuario = #{idUsuario}
+    </select>
+    
+    <insert id="insertPerfilUsuario" parameterType="UsuarioPerfilDTO" useGeneratedKeys="true">
+        insert into usuario_perfil 
+            (
+                id_usuario,
+                id_perfil, 
+                activo, 
+                borrado, 
+                fecha_registro, 
+                fecha_modificacion
+            ) 
+        values 
+            (
+                #{idUsuario},
+                #{idPerfil}, 
+                true, 
+                false, 
+                now(),
+                now()
+            )
+    </insert>
+</mapper>

@@ -1,0 +1,836 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mx.winit.codiga_backend.mapper.GanadoMapper">
+    
+    <resultMap id="ganadoMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="idUsuario" column="id_usuario"/> 
+        <result property="codigoArete" column="codigo_arete"/>
+        <result property="nombre" column="nombre"/>
+        <result property="fechaNacimiento" column="fecha_nacimiento"/>
+        <result property="sexo" column="sexo"/>
+        <result property="color" column="color"/>
+        <result property="peso" column="peso"/>
+        <result property="procedencia" column="procedencia"/>
+        <result property="inseminacion" column="inseminacion"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="idTipoGanado" column="id_tipo_ganado"/>
+        <result property="idEstatusGanado" column="id_estatus_ganado"/>
+        <result property="idRaza" column="id_raza"/>
+        <result property="idPadre" column="id_padre"/>
+        <result property="idMadre" column="id_madre"/>
+        <result property="idDispositivo" column="id_dispositivo"/>
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    
+    <select id="obtenerInfoMadre" resultMap="ganadoMap">
+        select * from ganado 
+        where activo=true 
+        and borrado=false 
+        and sexo = 'F'
+        and id_usuario =#{idUsuario}
+    </select>
+    
+    
+    
+    <select id="obtenerInfoPadre" resultMap="ganadoMap">
+        select * from ganado 
+        where activo=true 
+        and borrado=false 
+        and sexo = 'M'
+        and id_usuario =#{idUsuario}
+    </select>
+<!--    <resultMap id="getGanadoMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombre" column="nombre"/>         
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+-->    
+    <select id="getGanado" resultMap="ganadoMap">
+        select * from ganado where activo=true and borrado=false
+    </select>
+    
+    <resultMap id="obtenerGanadoDetalleMap" type="GanadoDetalleDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="idUsuario" column="id_usuario"/> 
+        <result property="codigoArete" column="codigo_arete"/>
+        <result property="nombre" column="nombre"/>
+        <result property="fechaNacimiento" column="fecha_nacimiento"/>
+        <result property="sexo" column="sexo"/>
+        <result property="color" column="color"/>
+        <result property="peso" column="peso"/>
+        <result property="procedencia" column="procedencia"/>
+        <result property="inseminacion" column="inseminacion"/>
+        <result property="nombreToro" column="nombre_toro"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="idTipoGanado" column="id_tipo_ganado"/>
+        <result property="idEstatusGanado" column="id_estatus_ganado"/>
+        <result property="idRaza" column="id_raza"/>
+        <result property="idPadre" column="id_padre"/>
+        <result property="idMadre" column="id_madre"/>
+        <result property="idDispositivo" column="id_dispositivo"/>
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/> 
+            
+        <result property="nombreRaza" column="nombre_raza"/>     
+        <result property="nombreTipoGanado" column="nombre_tipo_ganado"/>     
+        <result property="nombreEstatusGanado" column="nombre_estatus_ganado"/>     
+        <result property="nombreDispositivo" column="nombre_dispositivo"/> 
+
+        <result property="idCompraGanado" column="id_compra_ganado"/>     
+        <result property="vendedor" column="vendedor"/>     
+        <result property="costo" column="costo"/>     
+        <result property="factura" column="factura"/>     
+    </resultMap>
+    
+    <select id="obtenerGanadoDetalle" parameterType="Integer" resultMap="obtenerGanadoDetalleMap">
+        SELECT
+        gan.*, raz.nombre AS nombre_raza,
+        tg.nombre AS nombre_tipo_ganado,
+        eg.nombre nombre_estatus_ganado,
+        cd.identificador AS nombre_dispositivo,
+        cg.id_compra_ganado,
+        cg.vendedor,
+        cg.costo,
+        cg.factura
+        FROM
+        ganado gan
+        INNER JOIN cat_raza raz ON gan.id_raza = raz.id_raza
+        INNER JOIN cat_tipo_ganado tg ON gan.id_tipo_ganado = tg.id_tipo_ganado
+        INNER JOIN cat_estatus_ganado eg ON gan.id_estatus_ganado = eg.id_estatus_ganado
+        LEFT JOIN compra_ganado cg ON gan.id_ganado = cg.id_ganado
+        LEFT JOIN cat_dispositivo cd ON gan.id_dispositivo = cd.id_dispositivo
+        WHERE
+        gan.activo = TRUE
+        AND gan.borrado = FALSE
+        AND gan.id_usuario = #{idUsuario}
+        ORDER BY gan.id_ganado DESC
+    </select>
+    
+    <select id="paginadorGanadoDetalle" parameterType="Integer" resultMap="obtenerGanadoDetalleMap">
+        SELECT
+        gan.*, raz.nombre AS nombre_raza,
+        tg.nombre AS nombre_tipo_ganado,
+        eg.nombre nombre_estatus_ganado,
+        cd.identificador AS nombre_dispositivo,
+        cg.id_compra_ganado,
+        cg.vendedor,
+        cg.costo,
+        cg.factura
+        FROM
+        ganado gan
+        INNER JOIN cat_raza raz ON gan.id_raza = raz.id_raza
+        INNER JOIN cat_tipo_ganado tg ON gan.id_tipo_ganado = tg.id_tipo_ganado
+        INNER JOIN cat_estatus_ganado eg ON gan.id_estatus_ganado = eg.id_estatus_ganado
+        LEFT JOIN compra_ganado cg ON gan.id_ganado = cg.id_ganado
+        LEFT JOIN cat_dispositivo cd ON gan.id_dispositivo = cd.id_dispositivo
+        WHERE
+        gan.activo = TRUE
+        AND gan.borrado = FALSE
+        AND gan.id_usuario = #{idUsuario}
+        ORDER BY gan.id_ganado DESC
+	LIMIT #{numRegistros} OFFSET #{comienzoPaginacion} 
+    </select>
+    
+    
+    
+    <!--
+    
+    <resultMap id="getGanadoByIdMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombre" column="nombre"/>         
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+-->    
+    <select id="getGanadoById" parameterType="Integer" resultMap="ganadoMap">
+        select * from ganado where activo=true and borrado=false and id_ganado = #{idGanado}
+    </select>
+    
+    
+    <resultMap id="catDispositivoMap" type="CatDispositivoDTO" >
+        <result property="idDispositivo" column="id_dispositivo"/> 
+        <result property="identificador" column="identificador"/> 
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="validarDispositivoActivo" parameterType="String" resultMap="catDispositivoMap">
+        select * from cat_dispositivo cd 
+        inner join ganado g 
+        on cd.id_dispositivo = g.id_dispositivo 
+        where cd.activo = true and cd.identificador = #{dispositivo}
+    </select>
+    
+    <select id="validarCompra" parameterType="Integer" resultMap="obtenerGanadoDetalleMap">
+        select * from compra_ganado cg
+        inner join ganado g
+        on cg.id_ganado = g.id_ganado
+        where cg.activo = true 
+        and g.id_ganado = #{idGanadoCompra}
+    </select>
+    
+    <select id="validarRegistroEnCompra" parameterType="Integer" resultMap="obtenerGanadoDetalleMap">
+        select * from compra_ganado cg
+        inner join ganado g
+        on cg.id_ganado = g.id_ganado
+        and g.id_ganado = #{idGanadoCompra}
+    </select>
+    
+    <select id="getDispositivo" parameterType="String" resultMap="catDispositivoMap">
+        select * from cat_dispositivo cd 
+        where cd.activo = false and cd.identificador = #{dispositivo}
+    </select>
+    <!--
+    
+    <resultMap id="getGanadoByParamsMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombre" column="nombre"/>         
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+-->    <select id="getGanadoByParams" parameterType="GanadoDTO" resultMap="ganadoMap">
+        select * from ganado where activo=true and borrado=false
+        
+        <if test="nombre != null">
+           and nombre = #{nombre}
+        </if>
+        
+        <if test="idGanado != null">
+           and id_ganado = #{idGanado}
+        </if>
+        
+    </select>
+    
+    <update id="updateGanado" parameterType="GanadoDTO" useGeneratedKeys="true">
+        update ganado set
+        
+        <if test="nombre != null">
+            nombre = #{nombre},
+        </if>
+        
+        <if test="activo != null">
+            activo = #{activo},
+        </if>
+        
+        <if test="borrado != null">
+            borrado = #{borrado},
+        </if>
+        
+        fecha_modificacion = now()
+        where id_ganado = #{idGanado}
+    </update>
+    
+    <update id="updateCatDispositivo" parameterType="Integer" useGeneratedKeys="true">
+        update cat_dispositivo set
+        activo = true,
+        fecha_modificacion = now()
+        where id_dispositivo = #{idDispositivo}
+    </update>
+    
+    <insert id="insertGanado" parameterType="GanadoDTO" useGeneratedKeys="true">
+        insert into ganado 
+        (
+        id_usuario,
+        codigo_arete,
+        nombre,
+        fecha_nacimiento,
+        sexo,
+        color,
+        peso,
+        procedencia,
+        inseminacion,
+        nombre_toro,
+        observaciones,
+        id_tipo_ganado,
+        id_estatus_ganado,
+        id_raza,
+        id_padre,
+        id_madre,
+        id_dispositivo,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idUsuario},
+        #{codigoArete},
+        #{nombre},
+        #{fechaNacimiento},
+        #{sexo},
+        #{color},
+        #{peso},
+        #{procedencia},
+        #{inseminacion},
+        #{nombreToro},
+        #{observaciones},
+        #{idTipoGanado},
+        #{idEstatusGanado},
+        #{idRaza},
+        #{idPadre},
+        #{idMadre},
+        #{idDispositivo},
+        true,
+        false,
+        now(),
+        now()
+        )
+        <selectKey keyProperty="idGanado" resultType="int" order="AFTER">
+            select max(id_ganado) as idGanado from ganado
+        </selectKey> 
+    </insert>
+    
+    <insert id="insertGanadoCompras" parameterType="ComprasGanadoDTO" useGeneratedKeys="true">
+        insert into compra_ganado 
+        (
+        id_ganado,
+        vendedor,
+        costo,
+        factura,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idGanado},
+        #{vendedor},
+        #{costo},
+        #{factura},
+        true,
+        false,
+        now(),
+        now()
+        )
+    </insert>
+    
+    <update id="updateGanadoDetalle" parameterType="GanadoDetalleDTO" useGeneratedKeys="true">
+        update ganado set
+        
+        <if test="codigoArete != null">
+            codigo_arete = #{codigoArete},
+        </if>
+        
+        <if test="fechaNacimiento != null">
+            fecha_nacimiento = #{fechaNacimiento},
+        </if> 
+        
+        <if test="sexo != null">   
+            sexo = #{sexo},
+        </if>
+        
+        <if test="color != null">
+            color = #{color},
+        </if> 
+        
+        <if test="peso != null">   
+            peso = #{peso},
+        </if>
+        
+        <if test="procedencia != null"> 
+            procedencia = #{procedencia},
+        </if>
+        
+        <if test="inseminacion != null"> 
+            inseminacion = #{inseminacion},
+        </if> 
+         
+        <if test="nombreToro != null">   
+            nombre_toro = #{nombreToro},
+        </if>
+          
+        <if test="observaciones != null">   
+            observaciones = #{observaciones},
+        </if> 
+           
+        <if test="idTipoGanado != null"> 
+            id_tipo_ganado = #{idTipoGanado},
+        </if>
+        
+        <if test="idEstatusGanado != null">     
+            id_estatus_ganado = #{idEstatusGanado},
+        </if> 
+        
+        <if test="idRaza != null">    
+            id_raza = #{idRaza},
+        </if>
+            
+        <if test="idPadre != null">    
+            id_padre = #{idPadre},
+        </if> 
+           
+        <if test="idMadre != null">    
+            id_madre = #{idMadre},
+        </if> 
+           
+        <if test="idDispositivo != null">    
+            id_dispositivo = #{idDispositivo},
+        </if>    
+        
+        <if test="nombre != null">
+            nombre = #{nombre},
+        </if>
+        
+        <if test="activo != null">
+            activo = #{activo},
+        </if>
+        
+        <if test="borrado != null">
+            borrado = #{borrado},
+        </if>
+        
+        fecha_modificacion = now()
+        where id_ganado = #{idGanado}
+    </update>
+    
+    <update id="updateGanadoCompra" parameterType="ComprasGanadoDTO" useGeneratedKeys="true">
+        update  compra_ganado set
+        
+        <if test="vendedor != null">
+            vendedor = #{vendedor},
+        </if>
+        
+        <if test="costo != null">
+            costo = #{costo},
+        </if>
+        
+        <if test="factura != null">
+            factura = #{factura},
+        </if>
+        
+        <if test="activo != null">
+            activo = #{activo},
+        </if>
+        
+        <if test="borrado != null">
+            borrado = #{borrado},
+        </if>
+        
+        fecha_modificacion = now()
+        where id_ganado = #{idGanado}
+    </update>
+    
+<!--    <delete id="deleteGanado" parameterType="Integer">
+        update ganado set activo = false, borrado = true where id_ganado = #{idGanado}
+    </delete>-->
+    
+    <delete id="deleteGanadoCompra" parameterType="Integer">
+        update compra_ganado set activo = false, borrado = true where id_compra_ganado = #{idCompraGanado}
+    </delete>
+    
+    <delete id="deleteGanadoDetalle" parameterType="Integer">
+        update ganado set activo = false, borrado = true where id_ganado = #{idGanado}
+    </delete>
+    
+    
+    <!--VACUNAS-->
+    <resultMap id="obtenerVacunaMap" type="VacunaDTO" >
+        <result property="idVacunaGanado" column="id_vacuna_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombreVacuna" column="nombre_vacuna"/>
+        <result property="cantidadSubministrada" column="cantidad_subministrada"/>
+        <result property="fechaVacuna" column="fecha_vacuna"/>
+        <result property="fechaProximaVacuna" column="fecha_proxima_vacuna"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+    </resultMap>
+    
+    <select id="obtenerVacuna" resultMap="obtenerVacunaMap">
+        select * from vacuna_ganado 
+        where activo=true 
+        and borrado=false 
+        and id_ganado =#{idGanado}
+        order by id_vacuna_ganado desc
+    </select>
+    
+    <select id="obtenerCatalogoVacuna" resultMap="obtenerVacunaMap">
+        select nombre_vacuna from vacuna_ganado 
+        where activo=true 
+        and borrado=false 
+        and id_ganado =#{idGanado}
+        group by nombre_vacuna
+    </select>
+    
+    <select id="paginadorVacuna" parameterType="Integer" resultMap="obtenerVacunaMap">
+        select * from vacuna_ganado 
+        where activo=true 
+        and borrado=false 
+        and id_ganado =#{idGanado}
+        order by id_vacuna_ganado desc
+	LIMIT #{numRegistros} OFFSET #{comienzoPaginacion} 
+    </select>
+    
+    <insert id="insertVacuna" parameterType="VacunaDTO" useGeneratedKeys="true">
+        insert into vacuna_ganado 
+        (
+        id_ganado,
+        nombre_vacuna,
+        cantidad_subministrada,
+        fecha_vacuna,
+        fecha_proxima_vacuna,
+        observaciones,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idGanado},
+        #{nombreVacuna},
+        #{cantidadSubministrada},
+        #{fechaVacuna},
+        #{fechaProximaVacuna},
+        #{observaciones},
+        true,
+        false,
+        now(),
+        now()
+        )
+    </insert>
+    
+    <delete id="deleteVacunaGanado" parameterType="Integer">
+        update 
+        vacuna_ganado 
+        set activo = false, 
+        borrado = true 
+        where id_vacuna_ganado = #{idVacuna}
+    </delete>
+    
+    <!--PRODUCCION-->
+    <resultMap id="obtenerProduccionGanadoMap" type="ProduccionGanadoDTO" >
+        <result property="idProduccionGanado" column="id_produccion_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombreVenta" column="nombre_venta"/>
+        <result property="cantidad" column="cantidad"/>
+        <result property="precio" column="precio"/>
+        <result property="observaciones" column="observaciones"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+    </resultMap>
+    
+    <select id="obtenerProduccionGanado" resultMap="obtenerProduccionGanadoMap">
+        select * from produccion_ganado
+        where activo=true 
+        and borrado=false 
+        and id_ganado = #{idGanado}
+        order by id_produccion_ganado desc
+    </select>
+    
+    <select id="paginadorProduccionGanado" parameterType="Integer" resultMap="obtenerProduccionGanadoMap">
+        select * from produccion_ganado
+        where activo=true 
+        and borrado=false 
+        and id_ganado = #{idGanado}
+        order by id_produccion_ganado desc
+	LIMIT #{numRegistros} OFFSET #{comienzoPaginacion}
+    </select>
+    
+    <insert id="insertProduccionGanado" parameterType="ProduccionGanadoDTO" useGeneratedKeys="true">
+        insert into produccion_ganado 
+        (
+        id_ganado,
+        nombre_venta,
+        cantidad,
+        precio,
+        observaciones,
+        total,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idGanado},
+        #{nombreVenta},
+        #{cantidad},
+        #{precio},
+        #{observaciones},
+        #{total},
+        true,
+        false,
+        now(),
+        now()
+        )
+    </insert>
+    
+    <delete id="deleteProduccionGanado" parameterType="Integer">
+        update 
+        produccion_ganado
+        set activo = false, 
+        borrado = true 
+        where id_produccion_ganado = #{idProduccionGanado}
+    </delete>
+    
+    <!--REPRODUCCION-->
+    <resultMap id="obtenerReproduccionGanadoMap" type="ReproduccionGanadoDTO" >
+        <result property="idReproduccionGanado" column="id_reproduccion_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="inseminacion" column="inseminacion"/>
+        <result property="nombreToro" column="nombre_toro"/>
+        <result property="idToroMonta" column="id_toro_monta"/>
+        <result property="fechaSecado" column="fecha_secado"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+        <result property="nombreToroMonta" column="nombre_toro_monta"/>
+        <result property="fechaInseminacion" column="fecha_inseminacion"/>
+        <result property="pego" column="pego"/>
+        <result property="parto" column="parto"/>
+        <result property="aborto" column="aborto"/>
+    </resultMap>
+    
+    <select id="obtenerReproduccionGanado" resultMap="obtenerReproduccionGanadoMap">
+        select repgan.*,gan.nombre nombre_toro_monta 
+        from reproduccion_ganado repgan
+	left join ganado gan ON gan.id_ganado = repgan.id_toro_monta
+        where repgan.activo=true 
+        and repgan.borrado=false 
+        and repgan.id_ganado = #{idGanado}
+        ORDER BY repgan.id_reproduccion_ganado DESC
+    </select>
+    
+    <select id="paginadorReproduccionGanado" parameterType="Integer" resultMap="obtenerReproduccionGanadoMap">
+        select repgan.*,gan.nombre nombre_toro_monta 
+        from reproduccion_ganado repgan
+	left join ganado gan ON gan.id_ganado = repgan.id_toro_monta
+        where repgan.activo=true 
+        and repgan.borrado=false 
+        and repgan.id_ganado = #{idGanado}
+        ORDER BY repgan.id_reproduccion_ganado DESC
+	LIMIT #{numRegistros} OFFSET #{comienzoPaginacion}
+    </select>
+    
+    <insert id="insertReproduccionGanado" parameterType="ReproduccionGanadoDTO" useGeneratedKeys="true">
+        insert into reproduccion_ganado 
+        (
+        id_ganado,
+        inseminacion,
+        nombre_toro,
+        id_toro_monta,
+        fecha_secado,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion,
+        fecha_inseminacion,
+        pego
+        )
+        values
+        (
+        #{idGanado},
+        #{inseminacion},
+        #{nombreToro},
+        #{idToroMonta},
+        #{fechaSecado},
+        true,
+        false,
+        now(),
+        now(),
+        #{fechaInseminacion},
+        #{pego}
+        )
+    </insert>
+    
+    <delete id="deleteReproduccionGanado" parameterType="Integer">
+        update 
+        reproduccion_ganado
+        set activo = false, 
+        borrado = true 
+        where id_reproduccion_ganado = #{idReproduccionGanado}
+    </delete>
+    
+    <update id="updateFecundacionReproduccionGanado" parameterType="ReproduccionGanadoDTO" useGeneratedKeys="true">
+        update reproduccion_ganado set
+        <if test="fechaSecado != null">
+            fecha_secado = #{fechaSecado}
+        </if> 
+        <if test="pego != null">
+            pego = #{pego}
+        </if> 
+        <if test="parto != null">
+            parto = #{parto}
+        </if> 
+        <if test="aborto != null">
+            aborto = #{aborto}
+        </if> 
+        where id_reproduccion_ganado = #{idReproduccionGanado}
+    </update>
+    
+    <!--SEGUIMIENTO REPRODUCCION-->
+    <resultMap id="obtenerSeguimientoReproduccionGanadoMap" type="SeguimientoReproduccionGanadoDTO" >
+        <result property="idSeguimientoReproduccionGanado" column="id_seguimiento_reproduccion_ganado"/> 
+        <result property="idReproduccionGanado" column="id_reproduccion_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="observaciones" column="observaciones"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+    </resultMap>
+    
+    <select id="obtenerSeguimientoReproduccionGanado" resultMap="obtenerSeguimientoReproduccionGanadoMap">
+        select * from seguimiento_reproduccion_ganado
+        where activo=true 
+        and borrado=false 
+        and id_reproduccion_ganado = #{idReproduccionGanado}
+        ORDER BY id_seguimiento_reproduccion_ganado DESC
+    </select>
+    
+    <select id="paginadorSeguimientoReproduccionGanado" parameterType="Integer" resultMap="obtenerSeguimientoReproduccionGanadoMap">
+        select * from seguimiento_reproduccion_ganado
+        where activo=true 
+        and borrado=false 
+        and id_reproduccion_ganado = #{idReproduccionGanado}
+        ORDER BY id_seguimiento_reproduccion_ganado DESC
+	LIMIT #{numRegistros} OFFSET #{comienzoPaginacion}
+    </select>
+    
+    <insert id="insertSeguimientoReproduccionGanado" parameterType="SeguimientoReproduccionGanadoDTO" useGeneratedKeys="true">
+        insert into seguimiento_reproduccion_ganado
+        (
+        id_reproduccion_ganado,
+        id_ganado,
+        observaciones, 
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idReproduccionGanado},
+	#{idGanado},
+        #{observaciones},
+        true,
+        false,
+        now(),
+        now()
+	)
+    </insert>
+    
+    <delete id="deleteSeguimientoReproduccionGanado" parameterType="Integer">
+        update 
+        seguimiento_reproduccion_ganado
+        set activo = false, 
+        borrado = true 
+        where id_seguimiento_reproduccion_ganado = #{idSeguimientoReproduccionGanado}
+    </delete>
+    
+    <select id="getReproduccionGanadoByParams" parameterType="ReproduccionGanadoDTO" resultMap="obtenerReproduccionGanadoMap">
+        select repgan.*,gan.nombre nombre_toro_monta 
+        from reproduccion_ganado repgan
+	left join ganado gan ON gan.id_ganado = repgan.id_toro_monta
+        where repgan.activo=true 
+        and repgan.borrado=false 
+	
+        <if test="idReproduccionGanado != null">
+           and repgan.id_reproduccion_ganado = #{idReproduccionGanado}
+        </if>
+    </select>
+    
+    <!--PARTO GANADO-->
+    <resultMap id="obtenerPartoGanadoMap" type="PartoGanadoDTO" >
+        <result property="idPartoGanado" column="id_parto_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="idReproduccionGanado" column="id_reproduccion_ganado"/> 
+        <result property="idGanadoHijo" column="id_ganado_hijo"/> 
+        <result property="fechaParto" column="fecha_parto"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+        <result property="nombre" column="nombre"/>
+        <result property="sexo" column="sexo"/>
+    </resultMap>
+    
+    <select id="obtenerPartoGanado" resultMap="obtenerPartoGanadoMap">
+        select pg.*,gan.nombre, gan.sexo from parto_ganado pg
+        left join ganado gan ON gan.id_ganado = pg.id_ganado_hijo
+        where pg.activo=true 
+        and pg.borrado=false 
+        and pg.id_ganado = #{idGanado}
+        order by pg.id_parto_ganado desc
+    </select>
+    
+    <select id="paginadorPartoGanado" parameterType="Integer" resultMap="obtenerPartoGanadoMap">
+        select pg.*,gan.nombre, gan.sexo from parto_ganado pg
+        left join ganado gan ON gan.id_ganado = pg.id_ganado_hijo
+        where pg.activo=true 
+        and pg.borrado=false 
+        and pg.id_ganado = #{idGanado}
+        order by pg.id_parto_ganado desc
+        LIMIT #{numRegistros} OFFSET #{comienzoPaginacion}
+    </select>
+    
+    <insert id="insertPartoGanado" parameterType="PartoGanadoDTO" useGeneratedKeys="true">
+        insert into parto_ganado
+        (
+        id_ganado,
+        id_reproduccion_ganado,
+        id_ganado_hijo, 
+        fecha_parto,
+        activo,
+        borrado,
+        fecha_registro,
+        fecha_modificacion
+        )
+        values
+        (
+        #{idGanado},
+        #{idReproduccionGanado},
+        #{idGanadoHijo},
+        #{fechaParto},
+        true,
+        false,
+        now(),
+        now()
+        )
+    </insert>
+    
+    <!--VER PARTOS GANADO-->
+<!--    <resultMap id="obtenerPartoGanadoMap" type="PartoGanadoDTO" >
+        <result property="idPartoGanado" column="id_parto_ganado"/> 
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="idReproduccionGanado" column="id_reproduccion_ganado"/> 
+        <result property="idGanadoHijo" column="id_ganado_hijo"/> 
+        <result property="fechaParto" column="fecha_parto"/>
+        <result property="activo" column="activo"/>
+        <result property="borrado" column="borrado"/>
+        <result property="fechaRegistro" column="fecha_registro"/>
+        <result property="fechaModificacion" column="fecha_modificacion"/>
+        <result property="nombre" column="nombre"/>
+    </resultMap>-->
+    
+    
+</mapper>

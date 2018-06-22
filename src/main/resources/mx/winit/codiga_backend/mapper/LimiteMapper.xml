@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mx.winit.codiga_backend.mapper.LimiteMapper">
+    
+    <resultMap id="getLimiteMap" type="LimiteDTO" >
+        <result property="idLimite" column="id_limite"/> 
+        <result property="idUsuario" column="id_usuario"/>         
+        <result property="latitud" column="latitud"/>       
+        <result property="longitud" column="longitud"/>       
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getLimiteByIdUsuario"  parameterType="Integer" resultMap="getLimiteMap">
+        select * from limite where activo=true 
+        and borrado=false 
+        and id_usuario = #{idUsuario}
+    </select>
+    
+    <delete id="deleteLimite" parameterType="Integer">
+        update limite set activo = false, borrado = true where id_usuario = #{idUsuario}
+    </delete>
+    
+    <insert id="insertLimite" parameterType="java.util.List" useGeneratedKeys="true">
+         
+        <foreach collection="list" item="element" index="index">
+            insert into limite 
+            (
+                id_usuario,
+                latitud,
+                longitud,
+                activo,
+                borrado,
+                fecha_registro,
+                fecha_modificacion
+            )
+            values
+            (
+                #{element.idUsuario},
+                #{element.latitud},
+                #{element.longitud},
+                true,
+                false,
+                now(),
+                now()
+            );
+        </foreach>
+        
+    </insert>
+    
+<!--    <resultMap id="getGanadoByIdMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombre" column="nombre"/>         
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getGanadoById" parameterType="Integer" resultMap="getGanadoByIdMap">
+        select * from ganado where activo=true and borrado=false and id_ganado = #{idGanado}
+    </select>
+    
+    <resultMap id="getGanadoByParamsMap" type="GanadoDTO" >
+        <result property="idGanado" column="id_ganado"/> 
+        <result property="nombre" column="nombre"/>         
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getGanadoByParams" parameterType="GanadoDTO" resultMap="getGanadoByParamsMap">
+        select * from ganado where activo=true and borrado=false
+        
+        <if test="nombre != null">
+           and nombre = #{nombre}
+        </if>
+        
+        <if test="idGanado != null">
+           and id_ganado = #{idGanado}
+        </if>
+        
+    </select>
+    
+    <update id="updateGanado" parameterType="GanadoDTO" useGeneratedKeys="true">
+        update ganado set
+        
+        <if test="nombre != null">
+            nombre = #{nombre},
+        </if>
+        
+        <if test="activo != null">
+            activo = #{activo},
+        </if>
+        
+        <if test="borrado != null">
+            borrado = #{borrado},
+        </if>
+        
+        fecha_modificacion = now()
+        where id_ganado = #{idGanado}
+    </update>
+    
+    <insert id="insertGanado" parameterType="GanadoDTO" useGeneratedKeys="true">
+        insert into ganado 
+        (
+            nombre,
+            activo,
+            borrado,
+            fecha_registro,
+            fecha_modificacion
+        )
+        values
+        (
+            #{nombre},
+            true,
+            false,
+            now(),
+            now()
+        ) 
+    </insert>
+    
+    <delete id="deleteGanado" parameterType="Integer">
+        update ganado set activo = false, borrado = true where id_ganado = #{idGanado}
+    </delete>-->
+</mapper>

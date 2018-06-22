@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mx.winit.codiga_backend.mapper.UsuarioMapper">
+    
+    <resultMap id="getUsuarioByMap" type="UsuarioDTO" >
+        <result property="idUsuario" column="id_usuario"/> 
+        <result property="usuario" column="usuario"/>         
+        <result property="password" column="password"/>   
+        <result property="activo" column="uactivo"/>   
+        <result property="borrado" column="uborrado"/>  
+        <result property="fechaRegistro" column="ufecha_registro"/>   
+        <result property="fechaModificacion" column="ufecha_modificacion"/>   
+        <result property="actualizarDatos" column="actualizar_datos"/>   
+        <result property="usuarioDetalle.idUsuarioDetalle" column="id_usuario_detalle"/>   
+        <result property="usuarioDetalle.idUsuario" column="ud_id_usuario"/>   
+        <result property="usuarioDetalle.nombre" column="nombre"/>   
+        <result property="usuarioDetalle.apellidoPaterno" column="apellido_paterno"/>   
+        <result property="usuarioDetalle.apellidoMaterno" column="apellido_materno"/>   
+        <result property="usuarioDetalle.correo" column="correo"/>   
+        <result property="usuarioDetalle.telefono" column="telefono"/>   
+        <result property="usuarioDetalle.celular" column="celular"/>   
+        <result property="usuarioDetalle.calleNumero" column="calle_numero"/>   
+        <result property="usuarioDetalle.colonia" column="colonia"/>   
+        <result property="usuarioDetalle.municipio" column="municipio"/>    
+        <result property="usuarioDetalle.estado" column="estado"/>   
+        <result property="usuarioDetalle.activo" column="ud_activo"/>   
+        <result property="usuarioDetalle.borrado" column="ud_borrado"/>
+        <result property="usuarioDetalle.fechaRegistro" column="ud_fecha_registro"/>   
+        <result property="usuarioDetalle.fechaModificacion" column="ud_fecha_modificacion"/>       
+    </resultMap>
+    
+    <select id="getUsuarioBy" parameterType="UsuarioDTO" resultMap="getUsuarioByMap">      
+        SELECT
+            u.id_usuario,
+            u.usuario,
+            u.password,
+            u.activo as uactivo,
+            u.borrado as uborrado,
+            u.fecha_registro as ufecha_registro,
+            u.fecha_modificacion as ufecha_modificacion,
+            u.actualizar_datos,
+            ud.id_usuario_detalle,
+            ud.id_usuario as ud_id_usuario,
+            ud.nombre,
+            ud.apellido_paterno,
+            ud.apellido_materno,
+            ud.correo,
+            ud.telefono,
+            ud.celular,
+            ud.calle_numero,
+            ud.colonia,
+            ud.municipio,
+            ud.estado, 
+            ud.activo as ud_activo,
+            ud.borrado as ud_borrado,
+            ud.fecha_registro as ud_fecha_registro,
+            ud.fecha_modificacion as ud_fecha_modificacion
+        FROM
+            usuario u 
+        INNER JOIN usuario_detalle ud ON ud.id_usuario = u.id_usuario 
+        WHERE
+            1=1
+            AND u.activo = true
+            AND u.borrado = false
+            AND ud.activo = true
+            AND ud.borrado = false
+        
+            <if test="usuario != null">
+               AND  u.usuario = #{usuario}
+            </if>
+            
+            <if test="idUsuario != null">
+               AND u.id_usuario = #{idUsuario}
+            </if>
+        
+    </select>
+    
+    <insert id="insertUsuario" parameterType="UsuarioDTO" useGeneratedKeys="true" keyProperty="idUsuario">
+        insert into usuario 
+            (
+                usuario,
+                password, 
+                token_activate,
+                activo, 
+                borrado, 
+                fecha_registro, 
+                fecha_modificacion
+            ) 
+        values 
+            (
+                #{usuario},
+                #{password}, 
+                #{tokenActivate}, 
+                false, 
+                false, 
+                now(),
+                now()
+            )
+        <selectKey keyProperty="idUsuario" resultType="int" order="AFTER">
+                select max(id_usuario) as idUsuario from usuario
+        </selectKey>
+    </insert>
+    
+    <insert id="insertUsuarioDetalle" parameterType="UsuarioDetalleDTO" useGeneratedKeys="true" keyProperty="idUsuarioDetalle">
+        insert into usuario_detalle 
+            (
+                id_usuario,
+                correo, 
+                activo, 
+                borrado, 
+                fecha_registro, 
+                fecha_modificacion
+            ) 
+        values 
+            (
+                #{idUsuario},
+                #{correo}, 
+                true, 
+                false, 
+                now(),
+                now()
+            )
+        <selectKey keyProperty="idUsuarioDetalle" resultType="int" order="AFTER">
+                select max(id_usuario_detalle) as idUsuarioDetalle from usuario_detalle
+        </selectKey>
+    </insert>
+    
+    
+    <update id="updateUsuarioInfo" parameterType="UsuarioDTO" useGeneratedKeys="true">
+        update usuario_detalle set
+        
+        <if test="usuarioDetalle.nombre != null">
+            nombre = #{usuarioDetalle.nombre},
+        </if>
+        
+        <if test="usuarioDetalle.apellidoPaterno != null">
+            apellido_paterno = #{usuarioDetalle.apellidoPaterno},
+        </if>
+        
+        <if test="usuarioDetalle.apellidoMaterno != null">
+            apellido_materno = #{usuarioDetalle.apellidoMaterno},
+        </if>
+        
+        <if test="usuarioDetalle.correo != null">
+            correo = #{usuarioDetalle.correo},
+        </if>
+        
+        <if test="usuarioDetalle.telefono != null">
+            telefono = #{usuarioDetalle.telefono},
+        </if>
+        
+        <if test="usuarioDetalle.celular != null">
+            celular = #{usuarioDetalle.celular},
+        </if>
+        
+        <if test="usuarioDetalle.calleNumero != null">
+            calle_numero = #{usuarioDetalle.calleNumero},
+        </if>
+        
+        <if test="usuarioDetalle.colonia != null">
+            colonia = #{usuarioDetalle.colonia},
+        </if>
+        
+        <if test="usuarioDetalle.municipio != null">
+            municipio = #{usuarioDetalle.municipio},
+        </if>
+        
+        <if test="usuarioDetalle.estado != null">
+            estado = #{usuarioDetalle.estado},
+        </if>
+        
+        <if test="usuarioDetalle.activo != null">
+            activo = #{usuarioDetalle.activo},
+        </if>
+        
+        <if test="usuarioDetalle.borrado != null">
+            borrado = #{usuarioDetalle.borrado},
+        </if>
+        
+        
+        fecha_modificacion = now()
+        where id_usuario = #{usuarioDetalle.idUsuario}
+        
+    </update>
+    
+    <resultMap id="getUsuarioByCorreoMap" type="UsuarioDTO" >
+        <result property="idUsuario" column="id_usuario"/> 
+        <result property="usuario" column="usuario"/>         
+        <result property="password" column="password"/>   
+        <result property="activo" column="uactivo"/>   
+        <result property="borrado" column="uborrado"/>  
+        <result property="fechaRegistro" column="ufecha_registro"/>   
+        <result property="fechaModificacion" column="ufecha_modificacion"/>   
+        <result property="usuarioDetalle.idUsuarioDetalle" column="id_usuario_detalle"/>   
+        <result property="usuarioDetalle.idUsuario" column="ud_id_usuario"/>   
+        <result property="usuarioDetalle.nombre" column="nombre"/>   
+        <result property="usuarioDetalle.apellidoPaterno" column="apellido_paterno"/>   
+        <result property="usuarioDetalle.apellidoMaterno" column="apellido_materno"/>   
+        <result property="usuarioDetalle.correo" column="correo"/>   
+        <result property="usuarioDetalle.telefono" column="telefono"/>   
+        <result property="usuarioDetalle.celular" column="celular"/>   
+        <result property="usuarioDetalle.calleNumero" column="calle_numero"/>   
+        <result property="usuarioDetalle.colonia" column="colonia"/>   
+        <result property="usuarioDetalle.municipio" column="municipio"/>    
+        <result property="usuarioDetalle.estado" column="estado"/>   
+        <result property="usuarioDetalle.activo" column="ud_activo"/>   
+        <result property="usuarioDetalle.borrado" column="ud_borrado"/>
+        <result property="usuarioDetalle.fechaRegistro" column="ud_fecha_registro"/>   
+        <result property="usuarioDetalle.fechaModificacion" column="ud_fecha_modificacion"/>       
+    </resultMap>
+    
+    <select id="getUsuarioByCorreo" resultMap="getUsuarioByCorreoMap">      
+        SELECT
+            u.id_usuario,
+            u.usuario,
+            u.password,
+            u.activo as uactivo,
+            u.borrado as uborrado,
+            u.fecha_registro as ufecha_registro,
+            u.fecha_modificacion as ufecha_modificacion,
+            ud.id_usuario_detalle,
+            ud.id_usuario as ud_id_usuario,
+            ud.nombre,
+            ud.apellido_paterno,
+            ud.apellido_materno,
+            ud.correo,
+            ud.telefono,
+            ud.celular,
+            ud.calle_numero,
+            ud.colonia,
+            ud.municipio,
+            ud.estado, 
+            ud.activo as ud_activo,
+            ud.borrado as ud_borrado,
+            ud.fecha_registro as ud_fecha_registro,
+            ud.fecha_modificacion as ud_fecha_modificacion
+        FROM
+            usuario u 
+        INNER JOIN usuario_detalle ud ON ud.id_usuario = u.id_usuario 
+        WHERE
+            ud.correo = #{correo}
+        AND u.activo = true
+        AND u.borrado = false
+        AND ud.activo = true
+        AND ud.borrado = false
+    </select>
+    
+    <update id="updateUserPassword" parameterType="UsuarioDTO" useGeneratedKeys="true">
+        update usuario set password = #{password}, fecha_modificacion = now()
+        where id_usuario = #{idUsuario}
+    </update>
+    
+    <update id="updateUserData" parameterType="UsuarioDTO" useGeneratedKeys="true">
+        update usuario set actualizar_datos = #{actualizarDatos}, fecha_modificacion = now()
+        where id_usuario = #{idUsuario}
+    </update>
+    
+    <update id="activarCuenta" useGeneratedKeys="true">
+        update usuario set activo = true, fecha_modificacion = now()
+        where token_activate = #{token}
+    </update>
+    
+    <resultMap id="OnlineUserDTOMap" type="OnlineUserDTO">
+        <result property="idOnlineUser" column="id_online_user"/> 
+        <result property="idSocket" column="id_socket"/>         
+        <result property="username" column="username"/>   
+        <result property="activo" column="activo"/>   
+        <result property="borrado" column="borrado"/>  
+        <result property="fechaRegistro" column="fecha_registro"/>   
+        <result property="fechaModificacion" column="fecha_modificacion"/>         
+    </resultMap>
+    
+    <select id="getUsuariosOnline" resultMap="OnlineUserDTOMap">      
+        SELECT * FROM online_users WHERE activo = true
+    </select>
+    
+    <resultMap id="MensajeDTOMap" type="MensajeDTO">
+        <result property="id" column="id"/> 
+        <result property="idUsuario" column="id_usuario"/>         
+        <result property="username" column="username"/>   
+        <result property="mensaje" column="mensaje"/>         
+    </resultMap>
+    
+    <select id="getMensajesUsuario" resultMap="MensajeDTOMap" parameterType="String">      
+        select p.username, p.mensaje, o.id_socket FROM mensaje p 
+        INNER JOIN online_users o on o.username=p.username and o.activo=true and o.username = #{username}
+    </select>
+    
+    <insert id="addMsj" parameterType="MensajeDTO" useGeneratedKeys="true">
+        insert into mensaje 
+            (
+                username,
+                mensaje
+            ) 
+        values 
+            (
+                #{username}, 
+                #{mensaje}
+            )
+    </insert>
+    
+    <delete id="deleteMensajesUsuario" parameterType="String">
+        delete from mensaje where username=#{username}
+    </delete>
+    
+    
+</mapper>

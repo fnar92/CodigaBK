@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mx.winit.codiga_backend.mapper.CatalogoMapper">
+    
+    <resultMap id="getCatalogoRazasMap" type="CatRazaDTO" >
+        <result property="idRaza" column="id_raza"/> 
+        <result property="clave" column="clave"/> 
+        <result property="nombre" column="nombre"/>   
+        <result property="descripcion" column="descripcion"/>        
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getCatalogoRazas" resultMap="getCatalogoRazasMap">
+        select 
+            cat.id_raza, 
+            cat.clave,
+            cat.nombre,
+            cat.descripcion,
+            cat.activo,
+            cat.borrado,
+            cat.fecha_registro,
+            cat.fecha_modificacion
+        from 
+            cat_raza cat 
+        where 
+            activo=true and borrado=false
+            ORDER BY cat.id_raza
+    </select>
+    
+    <resultMap id="getCatalogoEstatusGanadoMap" type="CatEstatusGanadoDTO" >
+        <result property="idEstatusGanado" column="id_estatus_ganado"/> 
+        <result property="clave" column="clave"/> 
+        <result property="nombre" column="nombre"/>   
+        <result property="descripcion" column="descripcion"/>        
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getCatalogoEstatusGanado" resultMap="getCatalogoEstatusGanadoMap">
+        select 
+            catEG.id_estatus_ganado, 
+            catEG.clave,
+            catEG.nombre,
+            catEG.descripcion,
+            catEG.activo,
+            catEG.borrado,
+            catEG.fecha_registro,
+            catEG.fecha_modificacion
+        from 
+            cat_estatus_ganado catEG 
+        where 
+            activo=true and borrado=false
+            ORDER BY catEG.id_estatus_ganado
+    </select>
+    
+    <resultMap id="getCatalogoTipoGanadoMap" type="CatTipoGanadoDTO" >
+        <result property="idTipoGanado" column="id_tipo_ganado"/> 
+        <result property="clave" column="clave"/> 
+        <result property="nombre" column="nombre"/>   
+        <result property="descripcion" column="descripcion"/>        
+        <result property="activo" column="activo"/>       
+        <result property="borrado" column="borrado"/>       
+        <result property="fechaRegistro" column="fecha_registro"/>       
+        <result property="fechaModificacion" column="fecha_modificacion"/>     
+    </resultMap>
+    
+    <select id="getCatalogoTipoGanado" resultMap="getCatalogoTipoGanadoMap">
+        select 
+            catTG.id_tipo_ganado, 
+            catTG.clave,
+            catTG.nombre,
+            catTG.descripcion,
+            catTG.activo,
+            catTG.borrado,
+            catTG.fecha_registro,
+            catTG.fecha_modificacion
+        from 
+            cat_tipo_ganado catTG 
+        where 
+            activo=true and borrado=false
+            ORDER BY catTG.id_tipo_ganado
+    </select>
+    
+</mapper>
